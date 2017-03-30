@@ -1,0 +1,11 @@
+{
+    "name": "sharinpix/sharinpix",
+    "description": "SharinPix php library",
+    "type": "library",
+    "homepage": "https://github.com/sharinpix/sharinpix-php",
+    "require": {
+        "php": "^5.3.3 || ^7.1",
+        "guzzlehttp/guzzle": "6.2.*",
+        "lcobucci/jwt": "3.2.*"
+    }
+}
