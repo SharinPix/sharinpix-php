@@ -18,6 +18,9 @@ class Client {
     if(!$this->url != null && getenv('SHARINPIX_URL') != false){
       $this->url = getenv('SHARINPIX_URL');
     }
+    if($this->url == null){
+      throw new \Exception('No SharinPix credentials');
+    }
     $this->parse_url();
   }
 
@@ -26,7 +29,6 @@ class Client {
     $this->secret_id = $parsed['user'];
     $this->secret_secret = $parsed['pass'];
     $this->host = $parsed['host'];
-    var_dump($parsed);
     $this->api_path = $parsed['path'];
     if($this->api_path[-1] != '/'){
       $this->api_path .= '/';
@@ -50,11 +52,24 @@ class Client {
         'url' => $url,
         'album_id' => $album_id,
         'metadatas' => $metadatas
+      ],
+      [
+        'abilities'=> [
+          $album_id => [
+            'Access'=> [
+              'see' => true,
+              'image_upload' => true
+            ]
+          ]
+        ]
       ]
     );
   }
 
-  public function call_api($type, $path, $body=null){
+  public function call_api($type, $path, $body=null, $claims=null){
+    if($claims == null){
+      unset($claims);
+    }
     return $this->send_api_request($this->api_request($type, $path, $body));
   }
 
@@ -67,8 +82,8 @@ class Client {
     }
   }
 
-  public function api_request($type, $path, $body = null){
-    $token = $this->token(['admin'=>true]);
+  public function api_request($type, $path, $body = null, $claims = ['admin'=>true]){
+    $token = $this->token($claims);
     $headers = [
       'Authorization'=> "Token token=\"$token\""
     ];
