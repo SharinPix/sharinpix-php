@@ -67,15 +67,15 @@ class Client {
   }
 
   public function call_api($type, $path, $body=null, $claims=null){
-    if($claims == null){
-      unset($claims);
-    }
-    return $this->send_api_request($this->api_request($type, $path, $body));
+    return $this->send_api_request(
+      $this->api_request($type, $path, $body, $claims)
+    );
   }
 
   public function send_api_request($request){
     $response = $this->http_client()->send($request);
-    if($response->getStatusCode() == 200 || $response->getStatusCode() == 201){
+    $status = $response->getStatusCode();
+    if($status >= 200 && $status < 300){
       return json_decode($response->getBody()->getContents());
     } else {
       throw 'SharinPix Error';
